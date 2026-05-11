@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: cosmetic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cosmetic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cosmetic_dev_pwd}
+      POSTGRES_DB: ${POSTGRES_DB:-cosmetic}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cosmetic}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: cosmetic-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  langfuse-db:
+    image: postgres:16-alpine
+    container_name: cosmetic-langfuse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse_dev_pwd
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfusedb:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  langfuse:
+    image: langfuse/langfuse:2
+    container_name: cosmetic-langfuse
+    restart: unless-stopped
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse_dev_pwd@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-change_me_in_prod_please_xxxxxxxxxxx}
+      SALT: ${LANGFUSE_SALT:-change_me_in_prod_salt_xxxxxxxxxxxxx}
+      NEXTAUTH_URL: http://localhost:3000
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_INIT_ORG_ID: cosmetic
+      LANGFUSE_INIT_ORG_NAME: Cosmetic
+      LANGFUSE_INIT_PROJECT_ID: cosmetic-agent
+      LANGFUSE_INIT_PROJECT_NAME: cosmetic-agent
+    ports:
+      - "${LANGFUSE_PORT:-3000}:3000"
+
+volumes:
+  pgdata:
+  redisdata:
+  langfusedb:
