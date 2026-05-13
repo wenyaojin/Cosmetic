@@ -25,6 +25,8 @@ dependencies = [
     "markitdown[all]>=0.1.0",
     "langgraph>=0.4.0",
     "langchain-core>=0.3.0",
+    "jieba",
+    "rank-bm25>=0.2.2",
 ]
 
 [project.optional-dependencies]

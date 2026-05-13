@@ -1,6 +1,6 @@
 from langchain_core.runnables import RunnableConfig
 from app.agent.state import ConsultState
-from app.services.rag import search_similar
+from app.services.rag import search_hybrid
 from app.core.logging import get_logger
 
 logger = get_logger("agent.retrieve")
@@ -15,7 +15,7 @@ async def retrieve_node(state: ConsultState, config: RunnableConfig) -> ConsultS
     if concerns:
         query = f"{query} {' '.join(concerns)}"
 
-    docs = await search_similar(db, query, top_k=5)
+    docs = await search_hybrid(db, query, top_k=5)
     logger.info("Retrieved %d docs for query: %s", len(docs), query[:80])
 
     return {**state, "retrieved_docs": docs}

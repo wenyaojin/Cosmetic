@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-large-zh-v1.5"
     embedding_dim: int = 1024
 
+    # Reranker
+    reranker_api_key: str = ""
+    reranker_base_url: str = "https://api.siliconflow.cn/v1"
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+
     # Langfuse
     langfuse_host: str = "http://localhost:3000"
     langfuse_public_key: str = ""
