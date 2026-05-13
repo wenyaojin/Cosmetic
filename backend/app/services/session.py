@@ -72,3 +72,28 @@ async def update_session_profile(db: AsyncSession, session_id: uuid.UUID, profil
             if v is not None and v != [] and v != "":
                 existing[k] = v
         session.user_profile = existing
+
+
+async def list_sessions(db: AsyncSession) -> list[dict]:
+    result = await db.execute(
+        select(Session).order_by(Session.updated_at.desc()).limit(50)
+    )
+    sessions = result.scalars().all()
+
+    out = []
+    for s in sessions:
+        first_msg = await db.execute(
+            select(Message.content)
+            .where(Message.session_id == s.id, Message.role == "user")
+            .order_by(Message.seq.asc())
+            .limit(1)
+        )
+        title_row = first_msg.scalar_one_or_none()
+        title = (title_row[:30] + "…") if title_row and len(title_row) > 30 else (title_row or "新对话")
+        out.append({
+            "id": str(s.id),
+            "title": title,
+            "created_at": s.created_at.isoformat(),
+            "updated_at": s.updated_at.isoformat(),
+        })
+    return out

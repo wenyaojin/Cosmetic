@@ -7,7 +7,7 @@ from app.core.database import get_db
 from app.core.llm import get_llm_client
 from app.agent.graph import run_agent
 from app.agent.nodes.disclaim import DISCLAIMER
-from app.services.session import get_or_create_session, save_message, get_history, update_session_profile
+from app.services.session import get_or_create_session, save_message, get_history, update_session_profile, list_sessions
 from app.core.logging import get_logger
 
 router = APIRouter(prefix="/api/v1", tags=["agent"])
@@ -149,6 +149,13 @@ async def agent_chat_stream(req: ChatRequest, db: AsyncSession = Depends(get_db)
             yield {"event": "error", "data": json.dumps({"detail": "Agent processing failed"})}
 
     return EventSourceResponse(event_generator())
+
+
+@router.get("/sessions")
+async def get_sessions(db: AsyncSession = Depends(get_db)):
+    """List all sessions with their first user message as title."""
+    sessions = await list_sessions(db)
+    return {"sessions": sessions}
 
 
 @router.get("/sessions/{session_id}/messages")
