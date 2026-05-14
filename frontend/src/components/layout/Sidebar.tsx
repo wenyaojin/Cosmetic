@@ -18,6 +18,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     currentConversationId,
     loadConversation,
     newConversation,
+    removeConversation,
   } = useChatStore();
 
   const handleSelect = (conv: Conversation) => {
@@ -63,19 +64,28 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </p>
             )}
             {conversations.map((conv) => (
-              <button
+              <div
                 key={conv.id}
-                onClick={() => handleSelect(conv)}
                 className={cn(
-                  "w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors",
+                  "group w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer",
                   conv.id === currentConversationId
                     ? "bg-sidebar-accent text-sidebar-accent-foreground"
                     : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
                 )}
+                onClick={() => handleSelect(conv)}
               >
                 <MessageSquare size={14} className="shrink-0 opacity-50" />
-                <span className="truncate">{conv.title || "新对话"}</span>
-              </button>
+                <span className="truncate flex-1">{conv.title || "新对话"}</span>
+                <button
+                  className="shrink-0 opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeConversation(conv.id);
+                  }}
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             ))}
           </div>
         </ScrollArea>

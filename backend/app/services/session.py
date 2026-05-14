@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.session import Session, Message
 from app.core.logging import get_logger
@@ -97,3 +97,21 @@ async def list_sessions(db: AsyncSession) -> list[dict]:
             "updated_at": s.updated_at.isoformat(),
         })
     return out
+
+
+async def delete_session(db: AsyncSession, session_id: str) -> dict | None:
+    try:
+        sid = uuid.UUID(session_id)
+    except ValueError:
+        return None
+    result = await db.execute(select(Session).where(Session.id == sid))
+    session = result.scalar_one_or_none()
+    if not session:
+        return None
+    msg_result = await db.execute(delete(Message).where(Message.session_id == sid))
+    await db.execute(delete(Session).where(Session.id == sid))
+    await db.commit()
+    return {
+        "session_id": str(sid),
+        "messages_deleted": msg_result.rowcount,
+    }

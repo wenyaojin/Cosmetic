@@ -20,6 +20,13 @@ export async function fetchMessages(sessionId: string) {
   return res.json();
 }
 
+export async function deleteConversation(sessionId: string): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/api/v1/sessions/${sessionId}`, {
+    method: "DELETE",
+  });
+  return res.ok;
+}
+
 export async function* streamMessage(
   message: string,
   sessionId?: string

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { fetchMessages } from "@/lib/api";
+import { fetchMessages, deleteConversation } from "@/lib/api";
 import type { Message, Conversation } from "@/types/chat";
 
 interface ChatState {
@@ -19,6 +19,7 @@ interface ChatState {
   setLoading: (v: boolean) => void;
   newConversation: () => void;
   loadConversation: (id: string) => Promise<void>;
+  removeConversation: (id: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -72,6 +73,20 @@ export const useChatStore = create<ChatState>((set) => ({
       set({ messages: [] });
     } finally {
       set({ isLoading: false });
+    }
+  },
+  removeConversation: async (id: string) => {
+    const ok = await deleteConversation(id);
+    if (ok) {
+      set((s) => {
+        const filtered = s.conversations.filter((c) => c.id !== id);
+        const isCurrent = s.currentConversationId === id;
+        return {
+          conversations: filtered,
+          currentConversationId: isCurrent ? null : s.currentConversationId,
+          messages: isCurrent ? [] : s.messages,
+        };
+      });
     }
   },
 }));

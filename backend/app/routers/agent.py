@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 from app.models.schemas import ChatRequest
@@ -8,7 +8,7 @@ from app.core.llm import get_llm_client
 from app.agent.graph import run_agent
 from app.core.observe import create_trace, flush
 from app.agent.nodes.disclaim import DISCLAIMER
-from app.services.session import get_or_create_session, save_message, get_history, update_session_profile, list_sessions
+from app.services.session import get_or_create_session, save_message, get_history, update_session_profile, list_sessions, delete_session
 from app.services.audit import log_event
 from app.core.sanitizer import mask_pii, check_output
 from app.core.logging import get_logger
@@ -206,3 +206,12 @@ async def get_session_messages(session_id: str, db: AsyncSession = Depends(get_d
     """Retrieve conversation history for a session."""
     history = await get_history(db, session_id)
     return {"session_id": session_id, "messages": history}
+
+
+@router.delete("/sessions/{session_id}", status_code=204)
+async def delete_session_endpoint(session_id: str, db: AsyncSession = Depends(get_db)):
+    """Delete a session and all its messages."""
+    result = await delete_session(db, session_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return Response(status_code=204)
