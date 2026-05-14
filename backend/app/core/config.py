@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     app_env: str = "dev"
     app_port: int = 8000
     log_level: str = "INFO"
+    cors_origins: str = "http://localhost:3000"
 
     # PostgreSQL
     database_url: str = "postgresql+asyncpg://cosmetic:cosmetic_dev_pwd@localhost:5432/cosmetic"

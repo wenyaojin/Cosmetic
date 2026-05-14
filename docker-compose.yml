@@ -68,6 +68,48 @@ services:
     ports:
       - "${LANGFUSE_PORT:-3001}:3000"
 
+  backend:
+    build: ./backend
+    container_name: cosmetic-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-cosmetic}:${POSTGRES_PASSWORD:-cosmetic_dev_pwd}@postgres:5432/${POSTGRES_DB:-cosmetic}
+      REDIS_URL: redis://redis:6379/0
+      LANGFUSE_HOST: http://langfuse:3000
+      CORS_ORIGINS: "http://localhost,http://localhost:80,http://frontend:3000"
+    expose:
+      - "8000"
+
+  frontend:
+    build: ./frontend
+    container_name: cosmetic-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: ""
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: cosmetic-nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
 volumes:
   pgdata:
   redisdata:

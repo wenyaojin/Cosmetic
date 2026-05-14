@@ -2,12 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import health, chat, knowledge, agent
 from app.core.database import get_engine, Base
+from app.core.config import get_settings
 from app.core.logging import get_logger
 
 logger = get_logger("main")
 
 
 def create_app() -> FastAPI:
+    settings = get_settings()
     app = FastAPI(
         title="Cosmetic AI Agent",
         version="0.1.0",
@@ -15,7 +17,7 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
