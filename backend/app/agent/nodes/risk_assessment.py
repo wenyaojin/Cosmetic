@@ -1,7 +1,9 @@
 import json
+from langchain_core.runnables import RunnableConfig
 from app.agent.state import ConsultState
 from app.core.llm import get_llm_client
 from app.core.logging import get_logger
+from app.core.observe import create_span, end_span
 
 logger = get_logger("agent.risk")
 
@@ -24,11 +26,14 @@ RISK_PROMPT = """你是医美风险评估模块。根据用户信息和检索到
 }}"""
 
 
-async def risk_assessment_node(state: ConsultState) -> ConsultState:
+async def risk_assessment_node(state: ConsultState, config: RunnableConfig) -> ConsultState:
+    trace = config["configurable"].get("trace")
+    span = create_span(trace, "risk_assessment")
     profile = state.get("user_profile", {})
     docs = state.get("retrieved_docs", [])
 
     if not profile and not docs:
+        end_span(span, {"skipped": True})
         return {**state, "risk_flags": []}
 
     contra_texts = []
@@ -38,6 +43,7 @@ async def risk_assessment_node(state: ConsultState) -> ConsultState:
             contra_texts.append(text[:300])
 
     if not contra_texts and not any(profile.get(k) for k in ("allergies", "contraindications")):
+        end_span(span, {"skipped": True})
         return {**state, "risk_flags": []}
 
     llm = get_llm_client()
@@ -47,7 +53,7 @@ async def risk_assessment_node(state: ConsultState) -> ConsultState:
         contraindications="\n---\n".join(contra_texts) if contra_texts else "无相关信息",
     )
 
-    raw = await llm.chat([{"role": "user", "content": prompt}], temperature=0.1)
+    raw = await llm.chat([{"role": "user", "content": prompt}], temperature=0.1, trace=trace, generation_name="risk_assessment")
 
     try:
         cleaned = raw.strip()
@@ -59,4 +65,5 @@ async def risk_assessment_node(state: ConsultState) -> ConsultState:
         logger.warning("Risk parse failed. Raw: %s", raw[:200])
         risk_flags = []
 
+    end_span(span, {"risk_flags": risk_flags})
     return {**state, "risk_flags": risk_flags}

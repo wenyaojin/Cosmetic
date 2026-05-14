@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
 
     # Langfuse
-    langfuse_host: str = "http://localhost:3000"
+    langfuse_host: str = "http://localhost:3001"
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
 

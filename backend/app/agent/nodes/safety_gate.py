@@ -1,5 +1,7 @@
+from langchain_core.runnables import RunnableConfig
 from app.agent.state import ConsultState
 from app.core.logging import get_logger
+from app.core.observe import create_span, end_span
 
 logger = get_logger("agent.safety")
 
@@ -18,8 +20,12 @@ REFUSAL_RESPONSE = (
 )
 
 
-async def safety_gate_node(state: ConsultState) -> ConsultState:
+async def safety_gate_node(state: ConsultState, config: RunnableConfig) -> ConsultState:
+    trace = config["configurable"].get("trace")
+    span = create_span(trace, "safety_gate", state.get("user_message"))
+
     if state.get("intent") in BLOCKED_INTENTS:
+        end_span(span, {"blocked": True, "reason": "intent_blocked"})
         return {
             **state,
             "blocked": True,
@@ -31,6 +37,7 @@ async def safety_gate_node(state: ConsultState) -> ConsultState:
     for kw in DIAGNOSIS_KEYWORDS:
         if kw in msg:
             logger.info("Safety gate blocked: keyword '%s'", kw)
+            end_span(span, {"blocked": True, "reason": f"keyword:{kw}"})
             return {
                 **state,
                 "blocked": True,
@@ -38,4 +45,5 @@ async def safety_gate_node(state: ConsultState) -> ConsultState:
                 "response": REFUSAL_RESPONSE,
             }
 
+    end_span(span, {"blocked": False})
     return {**state, "blocked": False}

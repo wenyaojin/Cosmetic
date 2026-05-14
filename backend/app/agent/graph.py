@@ -6,6 +6,7 @@ from app.agent.nodes.safety_gate import safety_gate_node
 from app.agent.nodes.retrieve import retrieve_node
 from app.agent.nodes.risk_assessment import risk_assessment_node
 from app.agent.nodes.recommend import recommend_node
+from app.core.observe import create_trace
 from app.core.logging import get_logger
 
 logger = get_logger("agent.graph")
@@ -47,8 +48,11 @@ def build_graph():
 _GRAPH = build_graph()
 
 
-async def run_agent(user_message: str, db: AsyncSession, session_id: str = "", history: list[dict] | None = None) -> ConsultState:
+async def run_agent(user_message: str, db: AsyncSession, session_id: str = "", history: list[dict] | None = None, trace=None) -> ConsultState:
     """Run the full agent pipeline."""
+    if trace is None:
+        trace = create_trace(session_id, user_message)
+
     initial_state: ConsultState = {
         "user_message": user_message,
         "session_id": session_id,
@@ -66,7 +70,9 @@ async def run_agent(user_message: str, db: AsyncSession, session_id: str = "", h
         "block_reason": "",
     }
 
-    return await _GRAPH.ainvoke(
+    result = await _GRAPH.ainvoke(
         initial_state,
-        config={"configurable": {"db": db}},
+        config={"configurable": {"db": db, "trace": trace}},
     )
+
+    return result

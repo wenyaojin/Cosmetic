@@ -1,6 +1,8 @@
 import json
+from langchain_core.runnables import RunnableConfig
 from app.agent.state import ConsultState
 from app.core.logging import get_logger
+from app.core.observe import create_span, end_span
 
 logger = get_logger("agent.recommend")
 
@@ -40,8 +42,10 @@ def _build_context(state: ConsultState) -> str:
     return "\n\n".join(parts)
 
 
-async def recommend_node(state: ConsultState) -> ConsultState:
+async def recommend_node(state: ConsultState, config: RunnableConfig) -> ConsultState:
     """Prepare LLM messages; actual LLM call is performed by the router."""
+    trace = config["configurable"].get("trace")
+    span = create_span(trace, "recommend")
     context = _build_context(state)
 
     messages = [
@@ -54,6 +58,7 @@ async def recommend_node(state: ConsultState) -> ConsultState:
     docs = state.get("retrieved_docs", [])
     citations = [{"index": i + 1, "title": d["title"], "source": d["source"]} for i, d in enumerate(docs)]
 
+    end_span(span, {"citation_count": len(citations)})
     return {
         **state,
         "llm_messages": messages,

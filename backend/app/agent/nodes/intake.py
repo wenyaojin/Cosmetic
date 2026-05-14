@@ -1,6 +1,8 @@
 import json
+from langchain_core.runnables import RunnableConfig
 from app.core.llm import get_llm_client
 from app.core.logging import get_logger
+from app.core.observe import create_span, end_span
 from app.agent.state import ConsultState
 
 logger = get_logger("agent.intake")
@@ -39,7 +41,9 @@ INTAKE_PROMPT = """你是医美咨询助手的意图分析模块。分析用户�
 }"""
 
 
-async def intake_node(state: ConsultState) -> ConsultState:
+async def intake_node(state: ConsultState, config: RunnableConfig) -> ConsultState:
+    trace = config["configurable"].get("trace")
+    span = create_span(trace, "intake", state["user_message"])
     llm = get_llm_client()
 
     messages = [
@@ -49,7 +53,7 @@ async def intake_node(state: ConsultState) -> ConsultState:
         messages.append(msg)
     messages.append({"role": "user", "content": state["user_message"]})
 
-    raw = await llm.chat(messages, temperature=0.1)
+    raw = await llm.chat(messages, temperature=0.1, trace=trace, generation_name="intake")
 
     try:
         cleaned = raw.strip()
@@ -58,6 +62,7 @@ async def intake_node(state: ConsultState) -> ConsultState:
         result = json.loads(cleaned)
     except (json.JSONDecodeError, IndexError):
         logger.warning("Intake parse failed, defaulting to 科普. Raw: %s", raw[:200])
+        end_span(span, {"error": "parse_failed"})
         return {
             **state,
             "intent": "科普",
@@ -75,6 +80,7 @@ async def intake_node(state: ConsultState) -> ConsultState:
 
     if need_more and intent in ("方案推荐", "项目咨询"):
         followup = result.get("followup_question", "请问您的年龄和主要诉求是什么？")
+        end_span(span, {"intent": intent, "profile_complete": False})
         return {
             **state,
             "intent": intent,
@@ -83,6 +89,7 @@ async def intake_node(state: ConsultState) -> ConsultState:
             "response": followup,
         }
 
+    end_span(span, {"intent": intent, "profile_complete": True})
     return {
         **state,
         "intent": intent,
