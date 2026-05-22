@@ -36,6 +36,11 @@ async def save_message(
     intent: str | None = None,
     citations: list | None = None,
 ) -> None:
+    result = await db.execute(select(Session).where(Session.id == session_id))
+    session = result.scalar_one_or_none()
+    if session:
+        session.updated_at = func.now()
+
     count_result = await db.execute(
         select(func.count()).select_from(Message).where(Message.session_id == session_id)
     )

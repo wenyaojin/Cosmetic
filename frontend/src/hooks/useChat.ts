@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { useChatStore } from "@/stores/chat-store";
 import { streamMessage } from "@/lib/api";
+import type { Citation } from "@/types/chat";
 
 export function useChat() {
   const {
@@ -79,7 +80,7 @@ export function useChat() {
             }
             case "citations":
               updateMessage(assistantId, {
-                citations: event.data.citations as any,
+                citations: event.data.citations as Citation[],
               });
               break;
 
@@ -88,6 +89,9 @@ export function useChat() {
               break;
 
             case "done":
+              if (event.data.session_id) {
+                setCurrentConversation(event.data.session_id as string);
+              }
               updateMessage(assistantId, {
                 status: "done",
                 intent: (event.data.intent as string) ?? null,
@@ -113,6 +117,8 @@ export function useChat() {
       }
     },
     [
+      currentConversationId,
+      isLoading,
       addMessage,
       updateMessage,
       appendToken,

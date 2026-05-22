@@ -50,6 +50,8 @@ data/
 # Project artifacts
 backend/.uv/
 uv.lock
+knowledge/_processed/
+docs/~$*.docx
 
 # Claude
 .claude/

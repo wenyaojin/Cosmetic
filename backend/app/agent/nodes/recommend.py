@@ -31,7 +31,10 @@ def _build_context(state: ConsultState) -> str:
     if docs:
         refs = []
         for i, doc in enumerate(docs, 1):
-            refs.append(f"[{i}] 《{doc['title']}》（来源: {doc['source']}，权威等级: L{doc['authority_level']}）\n{doc['text']}")
+            meta = doc.get("metadata") or {}
+            source_url = meta.get("source_url")
+            source_note = f"，链接: {source_url}" if source_url else ""
+            refs.append(f"[{i}] 《{doc['title']}》（来源: {doc['source']}，权威等级: L{doc['authority_level']}{source_note}）\n{doc['text']}")
         parts.append("=== 参考资料 ===\n" + "\n\n".join(refs))
 
     risk_flags = state.get("risk_flags", [])
@@ -56,7 +59,15 @@ async def recommend_node(state: ConsultState, config: RunnableConfig) -> Consult
     messages.append({"role": "user", "content": context})
 
     docs = state.get("retrieved_docs", [])
-    citations = [{"index": i + 1, "title": d["title"], "source": d["source"]} for i, d in enumerate(docs)]
+    citations = [
+        {
+            "index": i + 1,
+            "title": d["title"],
+            "source": d["source"],
+            "url": (d.get("metadata") or {}).get("source_url", ""),
+        }
+        for i, d in enumerate(docs)
+    ]
 
     end_span(span, {"citation_count": len(citations)})
     return {

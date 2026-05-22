@@ -56,6 +56,19 @@ python -m scripts.process_inbox --file ../knowledge/_inbox/瑞蓝2号.pdf
 3. 扫描合规红线词
 4. 通过的存到 `_processed/`，有问题的存到 `_review/`
 
+### 可选：按 Phase 1 plan 抓取 PubMed 文献
+
+如果要先补一批公开学术来源，可运行：
+
+```bash
+cd Q:/Cosmetic/backend
+uv run python -m scripts.collect_pubmed_plan --limit-per-topic 2
+```
+
+脚本会按采集方案中的注射填充、光电美肤、并发症、面部解剖等主题，从 PubMed 公开接口获取标题、摘要、期刊、年份、PMID 和来源链接，并生成标准 Markdown 到 `knowledge/_processed/pubmed/`。
+
+为避免版权风险，脚本只入库公开摘要与元数据，不抓取或复制付费全文。
+
 ### 第 3 步：人工审核
 
 - 看 `_processed/` 里的文档 → 没问题就移到对应品类目录
@@ -70,6 +83,14 @@ python -m scripts.process_inbox --file ../knowledge/_inbox/瑞蓝2号.pdf
 ```bash
 cd Q:/Cosmetic/backend
 python -m scripts.batch_ingest ../knowledge/注射填充
+```
+
+对于 PubMed 自动采集结果，可直接先试运行：
+
+```bash
+cd Q:/Cosmetic/backend
+uv run python -m scripts.batch_ingest ../knowledge/_processed/pubmed --dry-run
+uv run python -m scripts.batch_ingest ../knowledge/_processed/pubmed
 ```
 
 ---

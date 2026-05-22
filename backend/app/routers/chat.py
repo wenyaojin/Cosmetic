@@ -32,7 +32,10 @@ def _build_rag_prompt(query: str, docs: list[dict]) -> str:
 
     refs = []
     for i, doc in enumerate(docs, 1):
-        refs.append(f"[{i}] 《{doc['title']}》（来源: {doc['source']}，权威等级: L{doc['authority_level']}）\n{doc['text']}")
+        meta = doc.get("metadata") or {}
+        source_url = meta.get("source_url")
+        source_note = f"，链接: {source_url}" if source_url else ""
+        refs.append(f"[{i}] 《{doc['title']}》（来源: {doc['source']}，权威等级: L{doc['authority_level']}{source_note}）\n{doc['text']}")
     context = "\n\n".join(refs)
 
     return f"""请基于以下参考资料回答用户问题。回答中必须用 [1][2] 等标注引用了哪条资料。
@@ -58,7 +61,15 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
     ]
     try:
         reply = await llm.chat(messages)
-        citations = [{"index": i + 1, "title": d["title"], "source": d["source"]} for i, d in enumerate(docs)]
+        citations = [
+            {
+                "index": i + 1,
+                "title": d["title"],
+                "source": d["source"],
+                "url": (d.get("metadata") or {}).get("source_url", ""),
+            }
+            for i, d in enumerate(docs)
+        ]
         return {"message": reply, "citations": citations, "session_id": req.session_id}
     except Exception as e:
         logger.error("LLM call failed: %s", e)
@@ -77,7 +88,15 @@ async def chat_stream(req: ChatRequest, db: AsyncSession = Depends(get_db)):
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": user_content},
     ]
-    citations = [{"index": i + 1, "title": d["title"], "source": d["source"]} for i, d in enumerate(docs)]
+    citations = [
+        {
+            "index": i + 1,
+            "title": d["title"],
+            "source": d["source"],
+            "url": (d.get("metadata") or {}).get("source_url", ""),
+        }
+        for i, d in enumerate(docs)
+    ]
 
     async def event_generator():
         try:

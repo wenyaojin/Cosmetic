@@ -1,5 +1,6 @@
 import uuid
 import math
+from datetime import date
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from rank_bm25 import BM25Okapi
@@ -51,13 +52,17 @@ async def ingest_document(
     source: str = "",
     category: str = "general",
     authority_level: int = 4,
+    published_at: date | None = None,
+    metadata: dict | None = None,
 ) -> uuid.UUID:
     doc = Document(
         title=title,
         source=source,
         category=category,
         authority_level=authority_level,
+        published_at=published_at,
         raw_content=content,
+        metadata_=metadata or {},
     )
     db.add(doc)
     await db.flush()
@@ -99,7 +104,7 @@ async def search_vector(
     sql = """
         SELECT
             c.id, c.doc_id, c.chunk_text, c.chunk_index,
-            d.title, d.source, d.category, d.authority_level,
+            d.title, d.source, d.category, d.authority_level, d.metadata AS doc_metadata,
             c.embedding <=> :emb AS distance
         FROM doc_chunks c
         JOIN documents d ON d.id = c.doc_id
@@ -124,6 +129,7 @@ async def search_vector(
             "source": row.source,
             "category": row.category,
             "authority_level": row.authority_level,
+            "metadata": row.doc_metadata or {},
             "distance": float(row.distance),
         }
         for row in rows
@@ -145,7 +151,7 @@ async def search_bm25(
     sql = """
         SELECT
             c.id, c.doc_id, c.chunk_text, c.chunk_index, c.tokens,
-            d.title, d.source, d.category, d.authority_level
+            d.title, d.source, d.category, d.authority_level, d.metadata AS doc_metadata
         FROM doc_chunks c
         JOIN documents d ON d.id = c.doc_id
         WHERE to_tsvector('simple', c.tokens) @@ to_tsquery('simple', :tsquery)
@@ -181,6 +187,7 @@ async def search_bm25(
             "source": row.source,
             "category": row.category,
             "authority_level": row.authority_level,
+            "metadata": row.doc_metadata or {},
             "bm25_score": float(score),
         }
         for row, score in scored_rows
@@ -249,7 +256,7 @@ async def search_hybrid(
                     item = candidates[idx].copy()
                     item["rerank_score"] = r["relevance_score"]
                     reranked.append(item)
-            logger.info("Reranked %d → %d results", len(candidates), len(reranked))
+            logger.info("Reranked %d -> %d results", len(candidates), len(reranked))
             return reranked
         except Exception as e:
             logger.warning("Rerank failed, falling back to RRF order: %s", e)

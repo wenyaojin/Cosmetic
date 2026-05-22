@@ -26,6 +26,7 @@ import argparse
 import asyncio
 import os
 import sys
+from datetime import date
 from pathlib import Path
 
 os.environ.setdefault("PYTHONIOENCODING", "utf-8")
@@ -34,6 +35,7 @@ if sys.stdout.encoding != "utf-8":
     sys.stderr.reconfigure(encoding="utf-8")
 
 import yaml
+from sqlalchemy import text
 
 from app.core.database import get_engine, get_session_factory, Base
 from app.services.rag import ingest_document
@@ -61,6 +63,47 @@ def parse_frontmatter(text: str) -> tuple[dict, str]:
     return meta, parts[2].strip()
 
 
+def parse_date(value) -> date | None:
+    if not value:
+        return None
+    if isinstance(value, date):
+        return value
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except ValueError:
+        return None
+
+
+def source_from_meta(meta: dict, default_source: str) -> str:
+    source = meta.get("source") or meta.get("source_doc") or default_source
+    source_url = meta.get("source_url")
+    if source and source_url:
+        return f"{source} | {source_url}"
+    return source_url or source or ""
+
+
+def metadata_from_frontmatter(meta: dict, file_path: Path) -> dict:
+    metadata = {k: normalize_metadata_value(v) for k, v in meta.items()}
+    metadata.setdefault("file_path", str(file_path))
+    metadata.setdefault("source_url", meta.get("source_url", ""))
+    metadata.setdefault("nmpa_status", meta.get("nmpa_status", ""))
+    metadata.setdefault("nmpa_no", meta.get("nmpa_no", ""))
+    metadata.setdefault("sub_category", meta.get("sub_category", ""))
+    metadata.setdefault("tags", meta.get("tags", []))
+    metadata.setdefault("compliance_review", meta.get("compliance_review", "pending"))
+    return metadata
+
+
+def normalize_metadata_value(value):
+    if isinstance(value, date):
+        return value.isoformat()
+    if isinstance(value, list):
+        return [normalize_metadata_value(v) for v in value]
+    if isinstance(value, dict):
+        return {k: normalize_metadata_value(v) for k, v in value.items()}
+    return value
+
+
 def collect_files(folder: Path) -> list[Path]:
     """Recursively collect all supported files, sorted by name."""
     files = []
@@ -85,7 +128,13 @@ async def ingest_file(
     title = meta.get("title", file_path.stem)
     category = meta.get("category", default_category)
     authority_level = meta.get("authority_level", default_authority)
-    source = meta.get("source", default_source or file_path.name)
+    source = source_from_meta(meta, default_source or file_path.name)
+    metadata = metadata_from_frontmatter(meta, file_path)
+    published_at = parse_date(meta.get("published_at") or meta.get("last_updated"))
+
+    existing_id = await find_existing_document(db, metadata)
+    if existing_id:
+        return {"file": str(file_path), "status": "skipped", "reason": f"already ingested: {existing_id}"}
 
     doc_id = await ingest_document(
         db=db,
@@ -94,8 +143,31 @@ async def ingest_file(
         source=source,
         category=category,
         authority_level=authority_level,
+        published_at=published_at,
+        metadata=metadata,
     )
     return {"file": str(file_path), "status": "ingested", "doc_id": str(doc_id), "title": title}
+
+
+async def find_existing_document(db, metadata: dict) -> str | None:
+    pmid = metadata.get("pmid")
+    source_url = metadata.get("source_url")
+    if not pmid and not source_url:
+        return None
+
+    clauses = []
+    params = {}
+    if pmid:
+        clauses.append("metadata ->> 'pmid' = :pmid")
+        params["pmid"] = str(pmid)
+    if source_url:
+        clauses.append("metadata ->> 'source_url' = :source_url")
+        params["source_url"] = str(source_url)
+
+    sql = "SELECT id FROM documents WHERE " + " OR ".join(clauses) + " LIMIT 1"
+    result = await db.execute(text(sql), params)
+    doc_id = result.scalar_one_or_none()
+    return str(doc_id) if doc_id else None
 
 
 async def main():

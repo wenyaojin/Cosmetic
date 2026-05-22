@@ -4,3 +4,9 @@
 CREATE INDEX IF NOT EXISTS idx_doc_chunks_fts
     ON doc_chunks
     USING GIN (to_tsvector('simple', tokens));
+
+-- HNSW index for pgvector cosine search over bge-large-zh embeddings.
+CREATE INDEX IF NOT EXISTS idx_doc_chunks_embedding_hnsw
+    ON doc_chunks
+    USING hnsw (embedding vector_cosine_ops)
+    WHERE embedding IS NOT NULL;
