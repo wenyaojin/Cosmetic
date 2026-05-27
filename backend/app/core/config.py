@@ -39,6 +39,21 @@ class Settings(BaseSettings):
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
 
+    # RAG enhancements (toggle per technique for ablation studies)
+    use_query_rewrite: bool = True
+    use_hyde: bool = True
+    use_small_to_big: bool = True
+    use_structured_kb: bool = True
+
+    # Query rewriting
+    query_rewrite_n: int = 4  # number of rewrites per query
+
+    # Small-to-big chunking
+    child_chunk_size: int = 256
+    child_chunk_overlap: int = 32
+    parent_chunk_size: int = 1536
+    parent_chunk_overlap: int = 128
+
     model_config = {
         "env_file": str(_ENV_FILE),
         "env_file_encoding": "utf-8",

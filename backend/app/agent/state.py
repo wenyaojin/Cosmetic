@@ -29,6 +29,7 @@ class ConsultState(TypedDict, total=False):
     profile_complete: bool
 
     retrieved_docs: list[dict]
+    project_cards: list[str]
     risk_flags: list[str]
 
     response: str
