@@ -6,6 +6,7 @@ from app.models.schemas import ChatRequest
 from app.core.llm import get_llm_client
 from app.core.database import get_db
 from app.services.rag import search_similar
+from app.services.session import get_or_create_session, get_history, save_message
 from app.core.logging import get_logger
 
 router = APIRouter(prefix="/api/v1", tags=["chat"])
@@ -73,6 +74,30 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
         return {"message": reply, "citations": citations, "session_id": req.session_id}
     except Exception as e:
         logger.error("LLM call failed: %s", e)
+        raise HTTPException(status_code=502, detail="LLM service unavailable")
+
+
+@router.post("/chat/raw")
+async def chat_raw(req: ChatRequest, db: AsyncSession = Depends(get_db)):
+    """Non-streaming multi-turn chat without agent orchestration or RAG."""
+    llm = get_llm_client()
+    session_id, _ = await get_or_create_session(db, req.session_id)
+    history = await get_history(db, session_id)
+    await save_message(db, session_id, "user", req.message)
+
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+    ]
+    messages.extend(history)
+    messages.append({"role": "user", "content": req.message})
+    try:
+        reply = await llm.chat(messages)
+        await save_message(db, session_id, "assistant", reply)
+        await db.commit()
+        return {"message": reply, "citations": [], "session_id": str(session_id)}
+    except Exception as e:
+        await db.rollback()
+        logger.error("Raw LLM call failed: %s", e)
         raise HTTPException(status_code=502, detail="LLM service unavailable")
 
 

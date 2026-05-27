@@ -20,6 +20,49 @@ export async function fetchMessages(sessionId: string) {
   return res.json();
 }
 
+export async function sendAgentChat(message: string, sessionId?: string | null) {
+  const res = await fetch(`${API_BASE}/api/v1/agent/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, session_id: sessionId ?? null }),
+  });
+
+  if (!res.ok) throw new Error(`RAG API error: ${res.status}`);
+  return res.json();
+}
+
+export async function sendRawChat(message: string, sessionId?: string | null) {
+  const res = await fetch(`${API_BASE}/api/v1/chat/raw`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, session_id: sessionId ?? null }),
+  });
+
+  if (!res.ok) throw new Error(`Raw API error: ${res.status}`);
+  return res.json();
+}
+
+export async function compareChat(
+  message: string,
+  ragSessionId?: string | null,
+  rawSessionId?: string | null
+) {
+  const headers = { "Content-Type": "application/json" };
+  const ragBody = JSON.stringify({ message, session_id: ragSessionId ?? null });
+  const rawBody = JSON.stringify({ message, session_id: rawSessionId ?? null });
+
+  const [ragRes, rawRes] = await Promise.all([
+    fetch(`${API_BASE}/api/v1/agent/chat`, { method: "POST", headers, body: ragBody }),
+    fetch(`${API_BASE}/api/v1/chat/raw`, { method: "POST", headers, body: rawBody }),
+  ]);
+
+  if (!ragRes.ok) throw new Error(`RAG API error: ${ragRes.status}`);
+  if (!rawRes.ok) throw new Error(`Raw API error: ${rawRes.status}`);
+
+  const [rag, raw] = await Promise.all([ragRes.json(), rawRes.json()]);
+  return { rag, raw };
+}
+
 export async function deleteConversation(sessionId: string): Promise<boolean> {
   const res = await fetch(`${API_BASE}/api/v1/sessions/${sessionId}`, {
     method: "DELETE",
