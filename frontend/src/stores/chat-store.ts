@@ -60,17 +60,33 @@ export const useChatStore = create<ChatState>((set) => ({
     try {
       const data = await fetchMessages(id);
       const history: Message[] = (data.messages ?? []).map(
-        (m: { role: string; content: string }, i: number) => ({
+        (
+          m: {
+            role: string;
+            content: string;
+            created_at?: string | null;
+            citations?: Message["citations"];
+            intent?: string | null;
+            risk_flags?: string[];
+            riskFlags?: string[];
+            blocked?: boolean;
+          },
+          i: number
+        ) => ({
           id: `hist-${id}-${i}`,
           role: m.role as "user" | "assistant",
           content: m.content,
-          timestamp: Date.now(),
+          timestamp: m.created_at ? new Date(m.created_at).getTime() : Date.now(),
           status: "done" as const,
+          citations: m.citations ?? [],
+          intent: m.intent ?? null,
+          riskFlags: m.riskFlags ?? m.risk_flags ?? [],
+          blocked: m.blocked ?? false,
         })
       );
       set({ messages: history });
     } catch {
-      set({ messages: [] });
+      set({ messages: [], currentConversationId: null });
     } finally {
       set({ isLoading: false });
     }

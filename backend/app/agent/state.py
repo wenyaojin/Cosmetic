@@ -38,3 +38,4 @@ class ConsultState(TypedDict, total=False):
     needs_disclaimer: bool
     blocked: bool
     block_reason: str
+    followup_hint: str

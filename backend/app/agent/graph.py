@@ -13,8 +13,6 @@ logger = get_logger("agent.graph")
 
 
 def _route_after_intake(state: ConsultState) -> str:
-    if not state.get("profile_complete", True):
-        return END
     if state.get("intent") == "闲聊":
         return "recommend"
     return "safety_gate"
@@ -36,7 +34,7 @@ def build_graph():
     graph.add_node("recommend", recommend_node)
 
     graph.set_entry_point("intake")
-    graph.add_conditional_edges("intake", _route_after_intake, {END: END, "safety_gate": "safety_gate", "recommend": "recommend"})
+    graph.add_conditional_edges("intake", _route_after_intake, {"safety_gate": "safety_gate", "recommend": "recommend"})
     graph.add_conditional_edges("safety_gate", _route_after_safety, {END: END, "retrieve": "retrieve"})
     graph.add_edge("retrieve", "risk_assessment")
     graph.add_edge("risk_assessment", "recommend")

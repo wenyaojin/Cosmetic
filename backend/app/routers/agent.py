@@ -8,7 +8,7 @@ from app.core.llm import get_llm_client
 from app.agent.graph import run_agent
 from app.core.observe import create_trace, flush
 from app.agent.nodes.disclaim import DISCLAIMER
-from app.services.session import get_or_create_session, save_message, get_history, update_session_profile, list_sessions, delete_session
+from app.services.session import get_or_create_session, save_message, get_history, get_display_history, update_session_profile, list_sessions, delete_session
 from app.services.audit import log_event
 from app.core.sanitizer import mask_pii, check_output
 from app.core.logging import get_logger
@@ -204,7 +204,7 @@ async def get_sessions(db: AsyncSession = Depends(get_db)):
 @router.get("/sessions/{session_id}/messages")
 async def get_session_messages(session_id: str, db: AsyncSession = Depends(get_db)):
     """Retrieve conversation history for a session."""
-    history = await get_history(db, session_id)
+    history = await get_display_history(db, session_id)
     return {"session_id": session_id, "messages": history}
 
 

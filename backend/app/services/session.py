@@ -57,15 +57,52 @@ async def save_message(
     db.add(msg)
 
 
-async def get_history(db: AsyncSession, session_id: uuid.UUID) -> list[dict]:
+def _coerce_session_id(session_id: uuid.UUID | str) -> uuid.UUID | None:
+    if isinstance(session_id, str):
+        try:
+            return uuid.UUID(session_id)
+        except ValueError:
+            return None
+    return session_id
+
+
+async def get_history(db: AsyncSession, session_id: uuid.UUID | str) -> list[dict]:
+    sid = _coerce_session_id(session_id)
+    if sid is None:
+        return []
+
     result = await db.execute(
         select(Message)
-        .where(Message.session_id == session_id)
+        .where(Message.session_id == sid)
         .order_by(Message.seq.asc())
         .limit(MAX_HISTORY_TURNS * 2)
     )
     messages = result.scalars().all()
     return [{"role": m.role, "content": m.content} for m in messages]
+
+
+async def get_display_history(db: AsyncSession, session_id: uuid.UUID | str) -> list[dict]:
+    sid = _coerce_session_id(session_id)
+    if sid is None:
+        return []
+
+    result = await db.execute(
+        select(Message)
+        .where(Message.session_id == sid)
+        .order_by(Message.seq.asc())
+        .limit(MAX_HISTORY_TURNS * 2)
+    )
+    messages = result.scalars().all()
+    return [
+        {
+            "role": m.role,
+            "content": m.content,
+            "intent": m.intent,
+            "citations": (m.citations or {}).get("items", []),
+            "created_at": m.created_at.isoformat() if m.created_at else None,
+        }
+        for m in messages
+    ]
 
 
 async def update_session_profile(db: AsyncSession, session_id: uuid.UUID, profile: dict) -> None:
