@@ -83,7 +83,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-cosmetic}:${POSTGRES_PASSWORD:-cosmetic_dev_pwd}@postgres:5432/${POSTGRES_DB:-cosmetic}
       REDIS_URL: redis://redis:6379/0
       LANGFUSE_HOST: http://langfuse:3000
-      CORS_ORIGINS: "http://localhost,http://localhost:80,http://frontend:3000"
+      CORS_ORIGINS: "http://localhost,http://localhost:80,http://localhost:3000,http://localhost:8000,http://frontend:3000"
     expose:
       - "8000"
 
