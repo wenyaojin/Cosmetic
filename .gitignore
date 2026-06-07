@@ -52,6 +52,7 @@ backend/.uv/
 uv.lock
 knowledge/_processed/
 docs/~$*.docx
+docs/*.docx
 docs/vision_pilot/data/*
 !docs/vision_pilot/data/README.md
 docs/vision_pilot/runs/*
