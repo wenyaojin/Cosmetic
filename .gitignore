@@ -52,6 +52,14 @@ backend/.uv/
 uv.lock
 knowledge/_processed/
 docs/~$*.docx
+docs/vision_pilot/data/*
+!docs/vision_pilot/data/README.md
+docs/vision_pilot/runs/*
+!docs/vision_pilot/runs/.gitkeep
+docs/vision_pilot/runs_*/
+docs/vision_pilot/report*.md
+docs/vision_pilot/summary*.json
+docs/vision_pilot/prompts/*_v[0-9]*.txt
 
 # Claude
 .claude/
