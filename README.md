@@ -1,113 +1,141 @@
-# Cosmetic AI Agent
+# Cosmetic — A Retrieval-Augmented LLM Agent
 
-基于开源 LLM + 医美知识库的智能咨询 Agent。
+An open-source LLM agent for domain knowledge-base consultation, currently using cosmetic / aesthetic-medicine as the working domain. The project is an actively-developed sandbox for studying retrieval-augmented agent design — how to combine LangGraph orchestration, LlamaIndex retrieval, vector storage, and observability into a coherent agent that can hold non-trivial multi-turn consultations grounded in a real, messy knowledge base.
 
-> 文档：
-> - [设计文档](./docs/design.md)
-> - [实施路线图](./docs/roadmap.md)
-
-## 技术栈
-
-- **后端**：FastAPI + LangGraph + LlamaIndex
-- **LLM**：DeepSeek V4（主） / Qwen2.5（辅）
-- **存储**：PostgreSQL + pgvector / Redis
-- **可观测**：Langfuse
-- **前端**：Next.js 14 + Vercel AI SDK
+> The cosmetic-consultation domain is the working setting; the framework itself — the orchestration, retrieval pipelines, and observability — is the focus of the work.
 
 ---
 
-## Phase 0：本地基础设施
+## Why this project
 
-### 前置要求
+Most public LLM-agent demos collapse under contact with a real knowledge base: retrieval is brittle, multi-turn state is dropped, and there is no easy way to inspect what the agent actually saw or said. This repo is a personal research sandbox to:
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)（含 Docker Compose v2）
-- 可用磁盘 ≥ 5GB
-- Windows 用户需启用 WSL2
+1. Build a production-grade RAG agent stack that is honest about its behavior (observability first).
+2. Iterate on retrieval strategies and agent orchestration patterns against a non-trivial domain knowledge base.
+3. Treat base-model choice as a swappable variable, so the same agent can be exercised across multiple open-weight LLMs.
 
-### 启动步骤
+The design choices here are deliberately influenced by recent work on retrieval-augmented generation and agent systems, including LightRAG (graph-augmented retrieval), RAG-Anything (multimodal retrieval), AutoAgent (zero-code agent orchestration), and the broader LangGraph / LlamaIndex ecosystem.
+
+---
+
+## What's in the repo
+
+| Component | Purpose |
+|---|---|
+| `backend/` | FastAPI service, LangGraph agent orchestration, LlamaIndex retrieval pipelines, Langfuse instrumentation |
+| `frontend/` | Next.js 14 + Vercel AI SDK streaming UI |
+| `infra/` | Docker Compose for PostgreSQL + pgvector + Redis + Langfuse |
+| `docs/` | Design document and staged execution roadmap |
+
+---
+
+## Tech stack
+
+- **Agent orchestration**: [LangGraph](https://github.com/langchain-ai/langgraph)
+- **Retrieval**: [LlamaIndex](https://github.com/run-llama/llama_index) on PostgreSQL + [pgvector](https://github.com/pgvector/pgvector)
+- **LLMs**: DeepSeek V4 (primary), Qwen2.5 (secondary) — behind a provider-agnostic abstraction so the base-model choice is swappable
+- **Observability**: [Langfuse](https://github.com/langfuse/langfuse) for end-to-end LLM tracing
+- **Cache / rate-limit**: Redis
+- **Frontend**: Next.js 14 + Vercel AI SDK (streaming)
+- **Infrastructure**: Docker Compose; Phase-0 setup is reproducible from a fresh machine
+
+---
+
+## Status
+
+This project is **under active development**.
+
+- **Phase 0 — local infrastructure**: complete (see setup section below)
+- **Phase 1 — agent + RAG pipeline**: in progress
+- Further phases planned in `docs/roadmap.md`
+
+---
+
+## Phase 0: Local infrastructure setup
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) (with Docker Compose v2)
+- ≥ 5 GB free disk
+- On Windows: WSL2 enabled
+
+### Quick start
 
 ```bash
-# 1) 复制环境变量示例
+# 1) Copy the example environment file
 cp .env.example .env
 
-# 2) （可选）按需修改 .env 中的密码 / 端口
+# 2) (Optional) edit passwords / ports in .env
 
-# 3) 启动全部基础设施
+# 3) Bring up the full local stack
 docker compose up -d
 
-# 4) 查看状态
+# 4) Check status
 docker compose ps
 
-# 5) 查看日志
+# 5) Tail logs (example: Langfuse)
 docker compose logs -f langfuse
 ```
 
-### 服务地址
+### Service endpoints
 
-| 服务      | 地址                       | 说明                      |
-|-----------|----------------------------|---------------------------|
-| PostgreSQL| `localhost:5432`           | 业务数据 + 向量库         |
-| Redis     | `localhost:6379`           | 缓存 / 限流               |
-| Langfuse  | http://localhost:3000      | LLM 监控（首次访问需注册）|
+| Service | Address | Purpose |
+|---|---|---|
+| PostgreSQL | `localhost:5432` | Application data + pgvector store |
+| Redis | `localhost:6379` | Cache + rate-limit |
+| Langfuse | http://localhost:3000 | LLM tracing UI (sign up on first visit) |
 
-### 验证
+### Verify the install
 
 ```bash
-# Postgres：进入容器执行 psql，确认 pgvector 已启用
+# Postgres: confirm pgvector is enabled
 docker exec -it cosmetic-postgres psql -U cosmetic -d cosmetic -c "\dx"
 
-# Redis：ping
+# Redis: ping
 docker exec -it cosmetic-redis redis-cli ping
 ```
 
-预期：
-- Postgres 输出包含 `vector` 扩展
-- Redis 返回 `PONG`
-- 浏览器访问 http://localhost:3000 看到 Langfuse 登录页
+Expected:
 
-### 关停 / 清理
+- Postgres lists a `vector` extension
+- Redis returns `PONG`
+- http://localhost:3000 shows the Langfuse login page
+
+### Tear down
 
 ```bash
-# 停止容器（保留数据）
-docker compose stop
-
-# 删除容器（保留数据卷）
-docker compose down
-
-# 彻底清理（含数据卷，谨慎！）
-docker compose down -v
+docker compose stop          # stop containers, keep data
+docker compose down          # remove containers, keep data volumes
+docker compose down -v       # full wipe, including data volumes (careful)
 ```
 
 ---
 
-## 项目结构
+## Project structure (top level)
 
 ```
-Q:/Cosmetic/
-├── docker-compose.yml          # 基础设施编排
-├── .env.example                # 环境变量模板
-├── .gitignore
-├── README.md
-├── docs/
-│   ├── design.md               # 系统设计文档
-│   └── roadmap.md              # 实施路线图
-├── infra/
-│   └── postgres/
-│       └── init/               # PG 初始化 SQL（扩展启用等）
-└── backend/                    # FastAPI 应用（Phase 1 创建）
+Cosmetic/
+├── backend/                # FastAPI + LangGraph + LlamaIndex
+├── frontend/               # Next.js 14
+├── infra/postgres/init/    # pgvector + schema bootstrap
+├── docs/                   # design.md, roadmap.md
+├── .env.example
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
 
-## 阶段进度
+## Author
 
-- [x] **Phase 0**：本地基础设施（Postgres + Redis + Langfuse）
-- [ ] **Phase 1**：FastAPI 骨架 + DeepSeek 接入
-- [ ] **Phase 2**：知识库 + RAG
-- [ ] **Phase 3**：LangGraph Agent 编排
-- [ ] **Phase 4**：安全合规层
-- [ ] **Phase 5**：可观测性
-- [ ] **Phase 6**：检索质量优化
-- [ ] **Phase 7**：前端 MVP
-- [ ] **Phase 8**：知识库扩充
-- [ ] **Phase 9**：部署上线
+Wenyao Jin — [github.com/wenyaojin](https://github.com/wenyaojin) · jinwenyao2014@gmail.com
+
+This work is part of an independent PhD-preparation research program, informally mentored by Prof. Ling Shao.
+
+Collaborators: *(to be added)*
+
+---
+
+## License
+
+To be added.
