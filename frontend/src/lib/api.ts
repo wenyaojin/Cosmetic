@@ -20,11 +20,19 @@ export async function fetchMessages(sessionId: string) {
   return res.json();
 }
 
-export async function sendAgentChat(message: string, sessionId?: string | null) {
+export async function sendAgentChat(
+  message: string,
+  sessionId?: string | null,
+  imageBase64?: string | null
+) {
   const res = await fetch(`${API_BASE}/api/v1/agent/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, session_id: sessionId ?? null }),
+    body: JSON.stringify({
+      message,
+      session_id: sessionId ?? null,
+      image_base64: imageBase64 ?? null,
+    }),
   });
 
   if (!res.ok) throw new Error(`RAG API error: ${res.status}`);
@@ -72,12 +80,17 @@ export async function deleteConversation(sessionId: string): Promise<boolean> {
 
 export async function* streamMessage(
   message: string,
-  sessionId?: string
+  sessionId?: string,
+  imageBase64?: string | null
 ): AsyncGenerator<SSEEvent> {
   const res = await fetch(`${API_BASE}/api/v1/agent/chat/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, session_id: sessionId ?? null }),
+    body: JSON.stringify({
+      message,
+      session_id: sessionId ?? null,
+      image_base64: imageBase64 ?? null,
+    }),
   });
 
   if (!res.ok) throw new Error(`API error: ${res.status}`);

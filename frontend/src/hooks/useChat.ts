@@ -20,7 +20,7 @@ export function useChat() {
   } = useChatStore();
 
   const send = useCallback(
-    async (text: string) => {
+    async (text: string, imageBase64?: string | null) => {
       if (isLoading) return;
 
       const userMsg = {
@@ -47,7 +47,8 @@ export function useChat() {
       try {
         for await (const event of streamMessage(
           text,
-          currentConversationId ?? undefined
+          currentConversationId ?? undefined,
+          imageBase64 ?? null
         )) {
           switch (event.event) {
             case "status": {

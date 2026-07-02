@@ -34,6 +34,16 @@ def _build_context(state: ConsultState) -> str:
     if any(v for v in profile.values() if v is not None and v != []):
         parts.append(f"=== 用户信息 ===\n{json.dumps(profile, ensure_ascii=False, indent=2)}")
 
+    vf = state.get("visual_features")
+    if vf and vf.get("top_feature"):
+        triggered = ", ".join(vf.get("triggered_principles") or []) or "（无）"
+        parts.append(
+            "=== 用户上传照片的视觉分析（医生 framework：骨/软组织/皮肤 三层）===\n"
+            f"主要特征: {vf['top_feature']}（层级: {vf.get('top_layer', 'unknown')}）\n"
+            f"触发的临床 principle: {triggered}\n\n"
+            f"详细分层观察：\n{vf.get('raw_text', '')}"
+        )
+
     # Project cards come BEFORE retrieved docs so they get higher attention
     # weight and so the system rule above ("cards win over passages") has a
     # clear textual anchor. Each card is already formatted by card_to_context.

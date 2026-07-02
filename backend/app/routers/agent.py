@@ -44,6 +44,7 @@ async def agent_chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
             session_id=str(session_id),
             history=history,
             trace=trace,
+            user_image=req.image_base64,
         )
 
         if saved_profile:
@@ -127,6 +128,7 @@ async def agent_chat_stream(req: ChatRequest, db: AsyncSession = Depends(get_db)
         session_id=str(session_id),
         history=history,
         trace=trace,
+        user_image=req.image_base64,
     )
 
     if saved_profile:

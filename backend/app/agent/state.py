@@ -24,6 +24,9 @@ class ConsultState(TypedDict, total=False):
     session_id: str
     history: list[dict]
 
+    user_image: str | None
+    visual_features: dict | None
+
     intent: Literal["科普", "项目咨询", "方案推荐", "术后护理", "闲聊", "拒答"] | None
     user_profile: UserProfile
     profile_complete: bool

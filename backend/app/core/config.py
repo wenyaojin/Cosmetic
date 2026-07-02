@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     llm_model: str = "qwen-plus"
 
+    # Vision (DashScope native SDK for VL models — qwen3-vl-flash etc.)
+    # Falls back to llm_api_key if unset (same DashScope account works for both).
+    dashscope_api_key: str = ""
+
     # Embedding
     embedding_provider: str = "siliconflow"
     embedding_api_key: str = ""

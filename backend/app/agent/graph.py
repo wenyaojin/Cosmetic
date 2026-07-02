@@ -1,6 +1,7 @@
 from langgraph.graph import StateGraph, END
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.agent.state import ConsultState
+from app.agent.nodes.vision_extract import vision_extract_node
 from app.agent.nodes.intake import intake_node
 from app.agent.nodes.safety_gate import safety_gate_node
 from app.agent.nodes.retrieve import retrieve_node
@@ -27,13 +28,15 @@ def _route_after_safety(state: ConsultState) -> str:
 def build_graph():
     graph = StateGraph(ConsultState)
 
+    graph.add_node("vision_extract", vision_extract_node)
     graph.add_node("intake", intake_node)
     graph.add_node("safety_gate", safety_gate_node)
     graph.add_node("retrieve", retrieve_node)
     graph.add_node("risk_assessment", risk_assessment_node)
     graph.add_node("recommend", recommend_node)
 
-    graph.set_entry_point("intake")
+    graph.set_entry_point("vision_extract")
+    graph.add_edge("vision_extract", "intake")
     graph.add_conditional_edges("intake", _route_after_intake, {"safety_gate": "safety_gate", "recommend": "recommend"})
     graph.add_conditional_edges("safety_gate", _route_after_safety, {END: END, "retrieve": "retrieve"})
     graph.add_edge("retrieve", "risk_assessment")
@@ -46,7 +49,7 @@ def build_graph():
 _GRAPH = build_graph()
 
 
-async def run_agent(user_message: str, db: AsyncSession, session_id: str = "", history: list[dict] | None = None, trace=None) -> ConsultState:
+async def run_agent(user_message: str, db: AsyncSession, session_id: str = "", history: list[dict] | None = None, trace=None, user_image: str | None = None) -> ConsultState:
     """Run the full agent pipeline."""
     if trace is None:
         trace = create_trace(session_id, user_message)
@@ -55,6 +58,8 @@ async def run_agent(user_message: str, db: AsyncSession, session_id: str = "", h
         "user_message": user_message,
         "session_id": session_id,
         "history": history or [],
+        "user_image": user_image,
+        "visual_features": None,
         "intent": None,
         "user_profile": {},
         "profile_complete": False,

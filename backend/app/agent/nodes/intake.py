@@ -89,6 +89,20 @@ async def intake_node(state: ConsultState, config: RunnableConfig) -> ConsultSta
             "followup_hint": "",
         }
 
+    # Path 2: image-aware injection — if vision_extract produced a top_feature,
+    # tell intake LLM there's already a visual signal so it stops asking the user
+    # to upload a photo and treats this as a recommendation request.
+    vf = state.get("visual_features")
+    if vf and vf.get("top_feature"):
+        vision_hint = (
+            f"\n\n[系统补充：用户已上传照片，AI 视觉分析显示主要特征为"
+            f"「{vf['top_feature']}」（层级: {vf.get('top_layer', 'unknown')}）。"
+            f"基于此，用户意图大概率为「方案推荐」；followup_question 不要再追问"
+            f"'是否上传照片'或'方便发张照片吗'类似问题。]"
+        )
+        user_msg = state["user_message"] + vision_hint
+        logger.info("intake: injected vision hint, top_feature=%s", vf["top_feature"])
+
     messages = [
         {"role": "system", "content": INTAKE_PROMPT},
     ]
