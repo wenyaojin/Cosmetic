@@ -40,9 +40,19 @@ logs/
 
 # Local data
 data/
+downloads/
 !backend/app/data/
 *.sqlite
 *.db
+tmp/
+
+# One-off scripts (crawlers, data prep, exploration) — kept locally only
+scripts/
+
+# Root-level Node scratch (frontend has its own package.json)
+/package.json
+/package-lock.json
+/node_modules/
 
 # Docker
 .docker/
