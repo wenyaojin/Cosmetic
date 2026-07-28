@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import health, chat, knowledge, agent
+from app.routers import health, chat, knowledge, agent, diagnosis, treatment_preview
 from app.core.database import get_engine, Base
 from app.core.config import get_settings
 from app.core.logging import get_logger
@@ -26,6 +26,8 @@ def create_app() -> FastAPI:
     app.include_router(chat.router)
     app.include_router(knowledge.router)
     app.include_router(agent.router)
+    app.include_router(diagnosis.router)
+    app.include_router(treatment_preview.router)
 
     @app.on_event("startup")
     async def on_startup():
