@@ -26,6 +26,13 @@ class Settings(BaseSettings):
     # Falls back to llm_api_key if unset (same DashScope account works for both).
     dashscope_api_key: str = ""
 
+    # Local vLLM (Qwen3-VL-32B-Thinking) for PoC diagnosis pipeline.
+    # Reach via SSH tunnel to the internal H100 box (see team runbook).
+    vllm_base_url: str = "http://localhost:8000/v1"
+    vllm_model: str = "qwen3-vl-32b-thinking"
+    vllm_api_key: str = "EMPTY"
+    vllm_few_shot_dir: str = ""
+
     # Embedding
     embedding_provider: str = "siliconflow"
     embedding_api_key: str = ""
