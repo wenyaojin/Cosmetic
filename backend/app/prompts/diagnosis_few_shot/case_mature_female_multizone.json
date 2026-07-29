@@ -1,0 +1,629 @@
+{
+  "case_level_judgment": {
+    "case_summary": "本例不是重度结构衰老型，也不是多部位中度偏中重度容量缺失型。更准确应判断为：肤质/色素/轻度红区/毛孔纹理为主要可见问题，伴轻度-中度眼周暗影/黑眼圈、轻中度阴影型法令，以及下颌缘清晰度一般。",
+    "output_style_guidance": "少做强结构诊断，多输出皮肤表面问题、轻中度眼周问题、轻中度法令阴影，以及需要补充角度的提示。",
+    "main_problem_axes": [
+      "眼周疲惫: 保留为P2：轻度-中度眼下暗影/黑眼圈。O03 泪沟、O06 眼颊交界标为轻度-中度可疑，不要输出中度偏中重度",
+      "中面部支撑不足: M01 苹果肌/前颊输出为轻度-中度或 P3；不要作为 main_problem",
+      "法令纹: 输出为 P2-P3：轻中度阴影型法令。不建议沿线大量填充",
+      "下颌缘 / 下面部: 输出为 P3：下颌缘清晰度一般，原因待确认。不要直接推荐下颌缘填充或咬肌肉毒",
+      "色素 / 肤质: 应作为 P1-P2：肤质 / 色素 / 轻度红区 / 毛孔纹理",
+      "太阳穴: 不作为明确问题输出。可以写“正面照不足，需45°/侧面确认”，但不要输出中度凹陷",
+      "鼻基底 / 下巴 / 颏颈角 / 咬肌: 不作为主问题，不输出明确治疗建议"
+    ]
+  },
+  "professional_assessment": [
+    {
+      "sub_area": "额头",
+      "primary_zone": "上面部",
+      "visible_evidence": "不是重点问题。静态额纹不明显，主要是光泽和肤质细腻度",
+      "not_visible_here": "无",
+      "problem_types": [
+        "TEX"
+      ],
+      "tissue_layers": [],
+      "severity_level": "mild",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度；肤质管理即可",
+      "priority": "low"
+    },
+    {
+      "sub_area": "眉间",
+      "primary_zone": "上面部",
+      "visible_evidence": "轻度静态眉间纹，动态未知",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_dynamic_view",
+      "match_reasoning": "doctor: needs dynamic view",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "待动态确认；低优先",
+      "priority": "low"
+    },
+    {
+      "sub_area": "眉部/眉尾",
+      "primary_zone": "上面部",
+      "visible_evidence": "眉尾没有明显中度下垂，眼周疲惫不能全部归因于眉尾",
+      "not_visible_here": "无",
+      "problem_types": [
+        "SAG"
+      ],
+      "tissue_layers": [
+        "SAG"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度-中度；不要作为核心问题",
+      "priority": "low"
+    },
+    {
+      "sub_area": "太阳穴/颞区",
+      "primary_zone": "上面部",
+      "visible_evidence": "正面照不能可靠判断太阳穴凹陷。如果只在正面判断的话属于轻度。",
+      "not_visible_here": "45°/侧面、45°",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_45_or_side_view",
+      "match_reasoning": "doctor deferred: needs 45/side",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "非经验医生不建议操作；禁止大容量盲填",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "非经验医生不建议操作",
+        "禁止大容量盲填"
+      ],
+      "direction_reasoning": "不输出明确凹陷等级；标记“需45°/侧面确认”；不作为主治疗点",
+      "priority": "low"
+    },
+    {
+      "sub_area": "上眼睑",
+      "primary_zone": "眶周区",
+      "visible_evidence": "上睑轻度疲惫可见，但不应定中度",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度-中度；以眼周整体修复为主",
+      "priority": "low"
+    },
+    {
+      "sub_area": "下眼睑皮肤",
+      "primary_zone": "眶周区",
+      "visible_evidence": "照片上有眼下暗影，但皮肤薄/细纹没有明显到中度偏中重度",
+      "not_visible_here": "无",
+      "problem_types": [
+        "PIG",
+        "WR"
+      ],
+      "tissue_layers": [
+        "DER"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "皮肤薄/敏感时不建议强刺激",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "皮肤薄/敏感时不建议强刺激"
+      ],
+      "direction_reasoning": "轻度-中度；眼周修复/分型，不直接强治疗",
+      "priority": "medium"
+    },
+    {
+      "sub_area": "泪沟/眶下凹陷",
+      "primary_zone": "眶周区",
+      "visible_evidence": "正面可见轻度眼下阴影，但不能确认真正泪沟深度",
+      "not_visible_here": "45°",
+      "problem_types": [
+        "VOL"
+      ],
+      "tissue_layers": [],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "未排除眼袋/水肿前不建议HA填充",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议直接HA",
+        "未排除眼袋/水肿前不建议HA填充"
+      ],
+      "direction_reasoning": "轻度-中度可疑；需45°、侧面；不建议直接HA",
+      "priority": "medium"
+    },
+    {
+      "sub_area": "黑眼圈",
+      "primary_zone": "眶周区",
+      "visible_evidence": "黑眼圈存在，但更接近轻度-中度，不是中度偏中重度",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "不建议一种方案解决所有黑眼圈",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议一种方案解决所有黑眼圈"
+      ],
+      "direction_reasoning": "轻度-中度；先分型，低刺激眼周管理",
+      "priority": "medium"
+    },
+    {
+      "sub_area": "眼袋/水肿",
+      "primary_zone": "眶周区",
+      "visible_evidence": "可以保留为需排除，但不能定性为明确眼袋",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "none_or_maintenance",
+      "match_reasoning": "doctor gave no explicit grade → default maintenance",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议眼下填充"
+      ],
+      "direction_reasoning": "眼袋/水肿待排除；低置信度；不建议眼下填充",
+      "priority": "low"
+    },
+    {
+      "sub_area": "眼颊交界/睑颊沟",
+      "primary_zone": "眶周区",
+      "visible_evidence": "正面看略有过渡不顺，但不是明显断层",
+      "not_visible_here": "45°",
+      "problem_types": [
+        "VOL"
+      ],
+      "tissue_layers": [
+        "VOL"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "不建议只处理泪沟",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议只处理泪沟"
+      ],
+      "direction_reasoning": "轻度-中度可疑；需45°/笑眼动态",
+      "priority": "medium"
+    },
+    {
+      "sub_area": "鱼尾纹/外眦",
+      "primary_zone": "眶周区",
+      "visible_evidence": "基本可以。静态鱼尾纹不明显",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_dynamic_view",
+      "match_reasoning": "doctor: needs dynamic view",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度/待动态确认；低优先",
+      "priority": "low"
+    },
+    {
+      "sub_area": "苹果肌/前颊",
+      "primary_zone": "中面部",
+      "visible_evidence": "没有看到中度偏中重度苹果肌塌陷。前颊略平，但不是核心矛盾",
+      "not_visible_here": "无",
+      "problem_types": [
+        "VOL"
+      ],
+      "tissue_layers": [],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "不建议过度填苹果肌",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议过度填苹果肌"
+      ],
+      "direction_reasoning": "轻度-中度；不要输出明显支撑不足",
+      "priority": "low"
+    },
+    {
+      "sub_area": "内侧面颊/眼颊连接",
+      "primary_zone": "中面部",
+      "visible_evidence": "与眼周暗影相关，但不能定明显断层",
+      "not_visible_here": "45°",
+      "problem_types": [
+        "PIG",
+        "VOL"
+      ],
+      "tissue_layers": [
+        "VOL"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度-中度可疑；需45°确认",
+      "priority": "low"
+    },
+    {
+      "sub_area": "颧部/颧弓",
+      "primary_zone": "中面部",
+      "visible_evidence": "色素/肤色不均可以保留，颧部明显色沉，黄褐斑样分布；中度偏中重度",
+      "not_visible_here": "偏振/UV",
+      "problem_types": [
+        "PIG"
+      ],
+      "tissue_layers": [
+        "EPI"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "高能量激光需谨慎，黄褐斑需分型",
+        "unblock": "保留“需分型/偏振UV”，不要直接定黄褐斑"
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "PIG/肤色不均轻度-中度；需偏振/UV；",
+      "priority": "low"
+    },
+    {
+      "sub_area": "侧颊/外侧面颊",
+      "primary_zone": "中面部",
+      "visible_evidence": "正面看侧颊松弛不算明显，下脸轮廓一般",
+      "not_visible_here": "45°/侧面、45°",
+      "problem_types": [
+        "SAG"
+      ],
+      "tissue_layers": [
+        "SAG"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度-中度；需45°/侧面",
+      "priority": "low"
+    },
+    {
+      "sub_area": "颧下区/颊中沟",
+      "primary_zone": "中面部",
+      "visible_evidence": "可以保留为低优先可疑",
+      "not_visible_here": "45°",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "mild",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度可疑；低优先；需45°",
+      "priority": "low"
+    },
+    {
+      "sub_area": "鼻基底",
+      "primary_zone": "中面部",
+      "visible_evidence": "不建议这样输出。正面未见明显鼻基底凹陷",
+      "not_visible_here": "45°/侧面、45°",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_45_or_side_view",
+      "match_reasoning": "doctor deferred: needs 45/side",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议这样输出。正面未见明显鼻基底凹陷"
+      ],
+      "direction_reasoning": "不作为主问题；仅写“需45°/侧面确认”",
+      "priority": "low"
+    },
+    {
+      "sub_area": "法令纹/鼻唇沟",
+      "primary_zone": "中面部",
+      "visible_evidence": "法令存在，但更偏轻中度阴影型，不是深沟型",
+      "not_visible_here": "无",
+      "problem_types": [
+        "VOL"
+      ],
+      "tissue_layers": [],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "不建议沿法令线大量填充",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议沿线大量填充",
+        "不建议沿法令线大量填充"
+      ],
+      "direction_reasoning": "轻度-中度；不建议沿线大量填充",
+      "priority": "medium"
+    },
+    {
+      "sub_area": "口周两侧",
+      "primary_zone": "下面部",
+      "visible_evidence": "口周略有支撑不足/过渡问题，但不是中度核心问题",
+      "not_visible_here": "无",
+      "problem_types": [
+        "VOL"
+      ],
+      "tissue_layers": [
+        "VOL"
+      ],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "不建议短期反复追加，不建议填满",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议短期反复追加，不建议填满"
+      ],
+      "direction_reasoning": "轻度-中度；分阶段观察",
+      "priority": "low"
+    },
+    {
+      "sub_area": "口角",
+      "primary_zone": "下面部",
+      "visible_evidence": "口角下拉不明显，不能定中度",
+      "not_visible_here": "下拉口角动态",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_dynamic_view",
+      "match_reasoning": "doctor: needs dynamic view",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度/待动态；需下拉口角动态",
+      "priority": "low"
+    },
+    {
+      "sub_area": "木偶纹/口角纹",
+      "primary_zone": "下面部",
+      "visible_evidence": "木偶纹不明显",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "mild",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "DAO 肉毒需动态确认",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度或轻度可疑；",
+      "priority": "low"
+    },
+    {
+      "sub_area": "颌前沟/pre-jowl",
+      "primary_zone": "下面部",
+      "visible_evidence": "正面不能判断 pre-jowl 凹陷主因",
+      "not_visible_here": "45°/侧面、45°",
+      "problem_types": [
+        "VOL",
+        "SAG"
+      ],
+      "tissue_layers": [
+        "VOL",
+        "SAG"
+      ],
+      "severity_level": "mild",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度可疑；需45°/侧面",
+      "priority": "low"
+    },
+    {
+      "sub_area": "唇部",
+      "primary_zone": "下面部",
+      "visible_evidence": "唇形自然，轻度年龄相关纹路",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "mild",
+      "match_reasoning": "doctor grade",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "轻度维护；低优先",
+      "priority": "low"
+    },
+    {
+      "sub_area": "下巴/颏部",
+      "primary_zone": "下面部",
+      "visible_evidence": "可以保留“正面受限”，但不要提出方案",
+      "not_visible_here": "侧面",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_45_or_side_view",
+      "match_reasoning": "doctor deferred: needs 45/side",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "暂不判断治疗；需侧面",
+      "priority": "low"
+    },
+    {
+      "sub_area": "颏肌区",
+      "primary_zone": "下面部",
+      "visible_evidence": "静态未见明显颏肌紧张",
+      "not_visible_here": "无",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_dynamic_view",
+      "match_reasoning": "doctor: needs dynamic view",
+      "safety_gate": {
+        "triggered": false,
+        "rule": null,
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [],
+      "direction_reasoning": "待动态确认；低优先",
+      "priority": "low"
+    },
+    {
+      "sub_area": "下颌缘",
+      "primary_zone": "下面部",
+      "visible_evidence": "下颌缘清晰度一般、下脸略圆，但不能定中度偏中重度",
+      "not_visible_here": "45°",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "mild_moderate",
+      "match_reasoning": "doctor grade (with 可疑 qualifier)",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "不建议单纯大量填充下颌缘",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议单纯大量填充下颌缘"
+      ],
+      "direction_reasoning": "轻度-中度可疑；需45°、侧面、咬紧、触诊",
+      "priority": "low"
+    },
+    {
+      "sub_area": "咬肌/下脸宽",
+      "primary_zone": "下面部",
+      "visible_evidence": "不应过度推测",
+      "not_visible_here": "咬紧动态",
+      "problem_types": [],
+      "tissue_layers": [],
+      "severity_level": "pending_dynamic_view",
+      "match_reasoning": "doctor deferred: needs dynamic",
+      "safety_gate": {
+        "triggered": true,
+        "rule": "未触诊不建议咬肌肉毒",
+        "unblock": null
+      },
+      "safe_to_recommend_now": [],
+      "requires_safety_gate_first": [],
+      "not_recommended": [
+        "不建议直接肉毒",
+        "未触诊不建议咬肌肉毒"
+      ],
+      "direction_reasoning": "不判断咬肌；需咬紧动态/触诊；不建议直接肉毒",
+      "priority": "low"
+    }
+  ]
+}

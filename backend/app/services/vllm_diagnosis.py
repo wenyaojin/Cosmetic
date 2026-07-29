@@ -1,8 +1,9 @@
 """Local vLLM (Qwen3-VL-32B-Thinking) diagnosis service — PoC pipeline.
 
 Takes a facial photo and produces a full 27-zone diagnosis JSON matching
-`tmp/system_prompt_for_diagnosis.md` schema, using 3-shot in-context learning
-from doctor-reviewed cases (b2/df/db across 25F/45F/54F age spread).
+`backend/app/prompts/diagnosis_system.md` schema, using 2-shot in-context
+learning from doctor-reviewed cases in
+`backend/app/prompts/diagnosis_few_shot/`.
 
 Deployment: vLLM OpenAI-compatible server on the H100 box, reached locally
 through an SSH tunnel — so `vllm_base_url=http://localhost:8000/v1` works
@@ -27,31 +28,22 @@ from app.core.logging import get_logger
 
 logger = get_logger("services.vllm_diagnosis")
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
-_SYSTEM_PROMPT_PATH = _REPO_ROOT / "tmp" / "system_prompt_for_diagnosis.md"
-_DEFAULT_FEW_SHOT_DIR = (
-    _REPO_ROOT
-    / "downloads"
-    / "agentcare_customers"
-    / "api_token_run_2026-06-17T06-34-09-075Z"
-    / "contrast_filter_2026-06-17T07-55-26-363Z"
-    / "images_by_patient"
-)
+_PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
+_SYSTEM_PROMPT_PATH = _PROMPTS_DIR / "diagnosis_system.md"
+_FEW_SHOT_DIR = _PROMPTS_DIR / "diagnosis_few_shot"
 
 # Fixed 2-shot roster for LEAVE-ONE-OUT eval:
-#   Removed CASE003 (patient_dff3abf1, 45F) from the shots so we can feed her
-#   photo at inference and see if the model interpolates from the 25F/54F
-#   extremes. Keeps 25F + 54F to teach the age → severity-density gradient.
-# Uses `diagnosis_doctor.json` (Slim schema, doctor-reviewed gold labels).
-# Tuple: (patient_id, image_filename, age, gender)
+#   Keeps the 25F + 54F extremes so the model can interpolate over the
+#   age → severity-density gradient. Any 45F case is held out for evaluation.
+# Each entry: (stem, age, gender). The stem resolves to
+#   `<_FEW_SHOT_DIR>/<stem>.png` (front photo) and
+#   `<_FEW_SHOT_DIR>/<stem>.json` (doctor-reviewed gold diagnosis).
 # age/gender live here because we removed `demographics` from the JSON schema
 # (it was training the model to fabricate patient_id at inference time).
-_FEW_SHOT_PATIENTS = [
-    ("patient_b2a332e5", "patient_b2a332e5_20260519_pre.png", 25, "female"),
-    ("patient_0943db4f", "patient_0943db4f_20260516_pre.png", 54, "female"),
+_FEW_SHOT_CASES = [
+    ("case_young_female_maintenance", 25, "female"),
+    ("case_mature_female_multizone", 54, "female"),
 ]
-
-_FEW_SHOT_DIAGNOSIS_FILENAME = "diagnosis_doctor.json"
 
 _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
@@ -59,11 +51,6 @@ _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 @lru_cache(maxsize=1)
 def _load_system_prompt() -> str:
     return _SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
-
-
-def _few_shot_root() -> Path:
-    s = get_settings()
-    return Path(s.vllm_few_shot_dir) if s.vllm_few_shot_dir else _DEFAULT_FEW_SHOT_DIR
 
 
 # Max long-edge in pixels. Qwen3-VL tokenizes ~800 tokens/image at 768x768; at
@@ -105,13 +92,11 @@ def _load_few_shot_messages() -> list[dict[str, Any]]:
     with the ground-truth diagnosis.json as text). Model learns the mapping
     "front photo of this age/skin → this 27-zone JSON".
     """
-    root = _few_shot_root()
     msgs: list[dict[str, Any]] = []
 
-    for patient_id, image_name, age, gender in _FEW_SHOT_PATIENTS:
-        patient_dir = root / patient_id
-        diag_path = patient_dir / _FEW_SHOT_DIAGNOSIS_FILENAME
-        img_path = patient_dir / image_name
+    for stem, age, gender in _FEW_SHOT_CASES:
+        diag_path = _FEW_SHOT_DIR / f"{stem}.json"
+        img_path = _FEW_SHOT_DIR / f"{stem}.png"
         if not diag_path.exists() or not img_path.exists():
             logger.warning("few-shot missing: %s or %s", diag_path, img_path)
             continue
