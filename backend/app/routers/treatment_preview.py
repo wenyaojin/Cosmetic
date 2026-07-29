@@ -23,6 +23,7 @@ from typing import Any, Literal
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.services import report_renderer, treatment_preview
 from app.services.dashscope_diagnosis import diagnose_from_image_cloud
@@ -31,9 +32,8 @@ logger = get_logger("routers.treatment_preview")
 
 router = APIRouter(prefix="/api/v1", tags=["treatment-preview"])
 
-_FIXTURE_ROOT = Path(__file__).resolve().parents[3] / "tmp"
-_FIXTURE_DIAGNOSIS = _FIXTURE_ROOT / "smoke_diagnosis_output_cloud.json"
-_FIXTURE_DIR = _FIXTURE_ROOT / "treatment_previews" / "patient_dff3abf1"
+_FIXTURE_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "patient_dff3abf1"
+_FIXTURE_DIAGNOSIS = _FIXTURE_DIR / "diagnosis.json"
 
 
 class PreviewRequest(BaseModel):
@@ -76,8 +76,8 @@ def _load_fixture() -> PreviewResponse:
         "estimated_cost_cny": diag_data.get("estimated_cost_cny", 0.0),
     }
 
-    before_bytes = (_FIXTURE_DIR / "original_pre.png").read_bytes()
-    after_bytes = (_FIXTURE_DIR / "plan_skin.png").read_bytes()
+    before_bytes = (_FIXTURE_DIR / "before.png").read_bytes()
+    after_bytes = (_FIXTURE_DIR / "after_skin.png").read_bytes()
     plans_manifest = json.loads((_FIXTURE_DIR / "plans.json").read_text(encoding="utf-8"))
     skin_plan = next(p for p in plans_manifest["plans"] if p["id"] == "skin")
 
@@ -109,6 +109,11 @@ def _load_fixture() -> PreviewResponse:
 @router.post("/treatment-preview", response_model=PreviewResponse)
 async def treatment_preview_endpoint(req: PreviewRequest) -> PreviewResponse:
     if req.use_fixture == "patient_dff3abf1":
+        if get_settings().app_env == "production":
+            raise HTTPException(
+                status_code=403,
+                detail="fixture endpoint is disabled in production",
+            )
         logger.info("treatment-preview: fixture path")
         try:
             return _load_fixture()

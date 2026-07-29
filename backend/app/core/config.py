@@ -6,7 +6,7 @@ _ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 
 
 class Settings(BaseSettings):
-    app_env: str = "dev"
+    app_env: str = "development"
     app_port: int = 8000
     log_level: str = "INFO"
     cors_origins: str = "http://localhost:3000"
@@ -31,7 +31,6 @@ class Settings(BaseSettings):
     vllm_base_url: str = "http://localhost:8000/v1"
     vllm_model: str = "qwen3-vl-32b-thinking"
     vllm_api_key: str = "EMPTY"
-    vllm_few_shot_dir: str = ""
 
     # Embedding
     embedding_provider: str = "siliconflow"

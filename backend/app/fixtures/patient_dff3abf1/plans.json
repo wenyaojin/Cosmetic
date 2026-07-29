@@ -1,0 +1,31 @@
+{
+  "patient_id": "patient_dff3abf1",
+  "source_image": "Q:\\Cosmetic\\downloads\\agentcare_customers\\api_token_run_2026-06-17T06-34-09-075Z\\contrast_filter_2026-06-17T07-55-26-363Z\\images_by_patient\\patient_dff3abf1\\patient_dff3abf1_20260520_pre.png",
+  "image_edit_model": "qwen-image-edit",
+  "plans": [
+    {
+      "id": "skin",
+      "title": "皮肤表层改善方案",
+      "focus": "色素、纹理、毛孔、细纹等表层问题",
+      "target_zones": [
+        "额头",
+        "下眼睑皮肤",
+        "内侧面颊/眼颊连接",
+        "颧部/颧弓"
+      ],
+      "problem_summary": "额头(PIG,TEX)、下眼睑皮肤(PIG,WR)、内侧面颊/眼颊连接(PIG)、颧部/颧弓(PIG)",
+      "instruction": "Preserve the subject's exact identity, facial structure, proportions, lighting, and natural pores. Realistic clinical dermatology post-treatment simulation. Maintain authentic micro-skin texture with genuine skin grain and zero plastic airbrushing or over-smoothing. Keep skin tone completely calm, neutral, and balanced with zero artificial facial redness or inflammation. Strictly preserve anatomical fidelity: do not hallucinate new fine lines, do not exaggerate existing wrinkles, and do not exacerbate original facial flaws. Subtle, realistic clinical refinement only, raw unedited photography style.\n\nApply the following zone-specific improvements only:\n- forehead (mild-moderate PIG+TEX): subtle (~25%) — reduce pigmentation spots and even out skin tone; refine skin texture and improve smoothness\n- lower eyelid skin (moderate PIG+WR): moderate (~40%) — reduce pigmentation spots and even out skin tone; soften fine wrinkles\n- medial cheek / eye-cheek junction (mild-moderate PIG): subtle (~25%) — reduce pigmentation spots and even out skin tone\n- zygomatic / cheekbone area (mild-moderate PIG): subtle (~25%) — reduce pigmentation spots and even out skin tone\n\nCritical: this is a medical treatment result, NOT a beauty filter. Do NOT smooth or airbrush the skin. Do NOT apply beauty filter effects. Do NOT add any text, watermark, label, or annotation.",
+      "image_file": "plan_skin.png",
+      "status": "ok",
+      "latency_sec": 17.382169008255005,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "characters": 0,
+        "height": 992,
+        "image_count": 1,
+        "width": 1056
+      }
+    }
+  ]
+}
