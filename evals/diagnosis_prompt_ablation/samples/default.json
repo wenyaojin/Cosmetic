@@ -1,0 +1,23 @@
+{
+  "description": "Held-out patient set used as the reference baseline for A vs C diagnosis-prompt ablation. Composition is intentionally frozen: swapping samples silently across runs would invalidate cross-experiment comparison. Every sample here is confirmed NOT part of the diagnosis_few_shot pool so evaluation is contamination-free.",
+  "samples": [
+    {
+      "patient_id": "patient_5cbe83f3",
+      "date": "20260520",
+      "user_inputs": {"age": null, "gender": "female"},
+      "notes": "young female, clear skin, undereye darkness dominant"
+    },
+    {
+      "patient_id": "patient_147ce64e",
+      "date": "20260519",
+      "user_inputs": {"age": null, "gender": "female"},
+      "notes": "round face type (bone/fat structure), non-aging"
+    },
+    {
+      "patient_id": "patient_bf27e6a1",
+      "date": "20260424",
+      "user_inputs": {"age": null, "gender": "female"},
+      "notes": "mature female with visible pigmentation on cheekbones"
+    }
+  ]
+}

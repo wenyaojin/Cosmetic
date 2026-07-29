@@ -46,6 +46,9 @@ downloads/
 *.db
 tmp/
 
+# Eval run outputs (regenerable from scripts + sample sheets in evals/)
+evals/**/results/
+
 # One-off scripts (crawlers, data prep, exploration) — kept locally only
 scripts/
 
