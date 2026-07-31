@@ -1,4 +1,4 @@
-# Cosmetic — A Multimodal AI Agent for Cosmetic-Medicine Consultation
+# Reveal — A Multimodal AI Agent for Cosmetic-Medicine Consultation
 
 A research sandbox for building a cosmetic-medicine consultation agent that
 can both **look at a patient's face** and **retrieve grounded answers from a
@@ -119,7 +119,7 @@ so citations, retrieved chunks, and generation prompts are inspectable.
 ## Repo layout
 
 ```
-Cosmetic/
+Reveal/
 ├── backend/                   FastAPI, LangGraph agent, treatment-preview pipeline
 │   ├── app/
 │   │   ├── agent/             6-node LangGraph orchestration

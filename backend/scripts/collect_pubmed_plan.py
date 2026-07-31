@@ -6,7 +6,7 @@ It stores PubMed titles, citation metadata, abstracts, and source URLs instead o
 copying paywalled full text.
 
 Usage:
-    cd Q:/Cosmetic/backend
+    cd Q:/Reveal/backend
     python -m scripts.collect_pubmed_plan --limit-per-topic 2
     python -m scripts.collect_pubmed_plan --dry-run
 """

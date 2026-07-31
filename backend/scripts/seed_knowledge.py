@@ -2,7 +2,7 @@
 Seed script: ingest sample medical aesthetics documents into the knowledge base.
 
 Usage:
-    cd Q:/Cosmetic/backend
+    cd Q:/Reveal/backend
     python -m scripts.seed_knowledge
 """
 import asyncio

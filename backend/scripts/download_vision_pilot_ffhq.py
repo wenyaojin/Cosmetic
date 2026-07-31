@@ -4,7 +4,7 @@ This helper uses the official FFHQ metadata JSON and downloads only the selected
 image records instead of the full 89 GB image archive.
 
 Usage:
-    cd Q:/Cosmetic/backend
+    cd Q:/Reveal/backend
     python -m scripts.download_vision_pilot_ffhq
 """
 from __future__ import annotations

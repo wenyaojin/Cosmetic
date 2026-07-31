@@ -15,7 +15,7 @@ Supports optional YAML frontmatter for metadata:
 Files without frontmatter use the filename (without extension) as title.
 
 Usage:
-    cd Q:/Cosmetic/backend
+    cd Q:/Reveal/backend
     python -m scripts.batch_ingest <folder_path> [--category general] [--authority-level 4] [--source ""] [--dry-run]
 
 Examples:

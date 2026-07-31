@@ -974,6 +974,6 @@ Few-shot 例子里 `none_or_maintenance` 占比很高（约 50%），这会让�
 
 - **xlsx 医生标准表** — `AI面部皮肤-结构评估系统(医生判断标准简表).xlsx` (含 5 张表：01_五大分区/02_二级部位/03_问题类型与组织层级/04_重点部位评分/设备与注射材料产品库)
 - **medical review** — `AI 原始诊断 vs 医生临床判断对比.xlsx` (case 001 有完整 review，case002/003 目前只是 AI 原始诊断整理)
-- **kb 提取脚本** — `Q:/Cosmetic/tmp/kb_dump.json` (由 openpyxl 从 xlsx 直接提取)
-- **md 生成脚本** — `Q:/Cosmetic/tmp/gen_prompt_md.py` (本文件生成器)
+- **kb 提取脚本** — `Q:/Reveal/tmp/kb_dump.json` (由 openpyxl 从 xlsx 直接提取)
+- **md 生成脚本** — `Q:/Reveal/tmp/gen_prompt_md.py` (本文件生成器)
 

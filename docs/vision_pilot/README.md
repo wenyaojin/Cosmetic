@@ -1,13 +1,13 @@
 # Vision Pilot
 
-这个目录实现 `Q:\paper-read\research\vision-pilot\design.md` 中的 pilot，但运行位置在 Cosmetic 项目内。
+这个目录实现 `Q:\paper-read\research\vision-pilot\design.md` 中的 pilot，但运行位置在 Reveal 项目内。
 
 目标：只验证 vision extraction + recommendation-conditioned re-examination 机制，不接入正式 chat agent / RAG pipeline。
 
 ## 环境
 
 ```powershell
-cd Q:\Cosmetic\backend
+cd Q:\Reveal\backend
 python -m pip install -e .
 ```
 
@@ -21,7 +21,7 @@ API key 会按顺序读取：
 把 5-8 张 `.jpg` / `.png` / `.webp` 放到：
 
 ```text
-Q:\Cosmetic\docs\vision_pilot\data
+Q:\Reveal\docs\vision_pilot\data
 ```
 
 真实图片默认作为本地实验数据，不进入 git。
@@ -31,14 +31,14 @@ Q:\Cosmetic\docs\vision_pilot\data
 只测试文件生成链路，不调用 API：
 
 ```powershell
-cd Q:\Cosmetic\backend
+cd Q:\Reveal\backend
 python -m scripts.vision_pilot --dry-run --limit 1
 ```
 
 跑完整 pilot（默认仅使用 `qwen3-vl-flash`，便宜 + 快）：
 
 ```powershell
-cd Q:\Cosmetic\backend
+cd Q:\Reveal\backend
 python -m scripts.vision_pilot
 ```
 

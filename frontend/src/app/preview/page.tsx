@@ -39,7 +39,7 @@ export default function PreviewPage() {
     <div className="h-screen overflow-y-auto bg-background text-foreground">
       <div className="max-w-6xl mx-auto px-6 py-10">
         <header className="border-b border-border pb-6 mb-8">
-          <h1 className="text-3xl font-bold">Cosmetic AI · 术后效果模拟 PoC</h1>
+          <h1 className="text-3xl font-bold">Reveal AI · 术后效果模拟 PoC</h1>
           <p className="text-sm text-muted-foreground mt-2">
             上传正面照 → AI 诊断 27 部位 → 生成治疗方案 → 图像编辑模型模拟术后效果 →
             生成诊断报告

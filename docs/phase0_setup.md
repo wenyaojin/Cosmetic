@@ -41,7 +41,7 @@ langfuse     langfuse/langfuse:2       LLM 监控 UI
 
 ### 3.2 准备 `.env`
 ```bash
-cd Q:/Cosmetic
+cd Q:/Reveal
 cp .env.example .env
 ```
 - DeepSeek / Embedding / Langfuse 的 key 暂时可以留 placeholder（Phase 0 用不到）

@@ -35,7 +35,7 @@ knowledge/
 ### 第 2 步：运行处理脚本
 
 ```bash
-cd Q:/Cosmetic/backend
+cd Q:/Reveal/backend
 
 # 先设置 LLM API Key（DeepSeek 或 OpenAI）
 export DEEPSEEK_API_KEY=sk-xxx
@@ -61,7 +61,7 @@ python -m scripts.process_inbox --file ../knowledge/_inbox/瑞蓝2号.pdf
 如果要先补一批公开学术来源，可运行：
 
 ```bash
-cd Q:/Cosmetic/backend
+cd Q:/Reveal/backend
 uv run python -m scripts.collect_pubmed_plan --limit-per-topic 2
 ```
 
@@ -81,14 +81,14 @@ uv run python -m scripts.collect_pubmed_plan --limit-per-topic 2
 确认无误的文档放进 `注射填充/` `光电美肤/` 等品类目录后：
 
 ```bash
-cd Q:/Cosmetic/backend
+cd Q:/Reveal/backend
 python -m scripts.batch_ingest ../knowledge/注射填充
 ```
 
 对于 PubMed 自动采集结果，可直接先试运行：
 
 ```bash
-cd Q:/Cosmetic/backend
+cd Q:/Reveal/backend
 uv run python -m scripts.batch_ingest ../knowledge/_processed/pubmed --dry-run
 uv run python -m scripts.batch_ingest ../knowledge/_processed/pubmed
 ```

@@ -8,7 +8,7 @@
 4. 通过的写入 _processed/，需人工复审的写入 _review/
 
 用法：
-    cd Q:/Cosmetic/backend
+    cd Q:/Reveal/backend
     python -m scripts.process_inbox
 
     # 或处理单个文件

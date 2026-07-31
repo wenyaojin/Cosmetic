@@ -1,6 +1,6 @@
 # Phase 1 文献采集方案（MVP 阶段）
 
-> **项目**：Cosmetic AI Agent — 医美 RAG 知识库建设
+> **项目**：Reveal AI Agent — 医美 RAG 知识库建设
 > **阶段**：Phase 1 / MVP
 > **周期**：M1-M3（3 个月）
 > **总量**：300 篇

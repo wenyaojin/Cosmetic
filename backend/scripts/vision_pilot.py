@@ -14,7 +14,7 @@ It intentionally stays outside the production chat agent/RAG pipeline so the
 experiment can be repeated and scored without changing user-facing behavior.
 
 Usage:
-    cd Q:/Cosmetic/backend
+    cd Q:/Reveal/backend
     python -m scripts.vision_pilot --dry-run --limit 1
     python -m scripts.vision_pilot
     python -m scripts.vision_pilot summarize
